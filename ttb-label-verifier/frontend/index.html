@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TTB Label Verification</title>
+  <link rel="stylesheet" href="style.css?v=8" />
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <div class="brand">
+        <span class="seal" aria-hidden="true">★</span>
+        <div>
+          <h1>Label Verification</h1>
+          <p class="subtitle">Check that a label matches its application</p>
+        </div>
+      </div>
+      <div id="engine" class="engine" title="OCR engine">checking engine…</div>
+    </div>
+  </header>
+
+  <nav class="tabs wrap" role="tablist">
+    <button class="tab is-active" id="tab-single" role="tab" aria-selected="true">Check one label</button>
+    <button class="tab" id="tab-batch" role="tab" aria-selected="false">Batch check</button>
+  </nav>
+
+  <main class="wrap">
+
+    <!-- ===================== SINGLE ===================== -->
+    <section id="panel-single" class="panel">
+      <div class="grid">
+
+        <form id="single-form" class="card form" novalidate>
+          <h2 class="card-title">Application details</h2>
+          <p class="hint">Enter what was filed, then add the label photo. All fields are required, except alcohol content for wine and beer.</p>
+
+          <label class="field">
+            <span class="label-text">Brand name <em>required</em></span>
+            <input name="brand_name" type="text" placeholder="OLD TOM DISTILLERY" required />
+          </label>
+
+          <label class="field">
+            <span class="label-text">Class / type <em>required</em></span>
+            <input name="class_type" type="text" placeholder="Kentucky Straight Bourbon Whiskey" />
+          </label>
+
+          <div class="row">
+            <label class="field">
+              <span class="label-text">Alcohol content <em id="abv-required">required</em></span>
+              <input name="alcohol_content" type="text" placeholder="45% Alc./Vol." />
+              <span id="abv-note" class="field-note" hidden></span>
+            </label>
+            <label class="field">
+              <span class="label-text">Net contents <em>required</em></span>
+              <input name="net_contents" type="text" placeholder="750 mL" />
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="label-text">Place of origin (state or country) <em>required</em></span>
+            <input name="origin" type="text" placeholder="Kentucky  —  or  —  Product of Mexico" />
+          </label>
+
+          <div class="field">
+            <span class="label-text">Label photo <em>required</em></span>
+            <div id="drop" class="drop" tabindex="0" role="button"
+                 aria-label="Add a label image. Click or drop a file.">
+              <input id="file" type="file" accept="image/*" hidden />
+              <div class="drop-empty">
+                <span class="drop-plus" aria-hidden="true">+</span>
+                <span>Click to add a photo, or drop one here</span>
+              </div>
+              <img id="preview" class="preview" alt="" hidden />
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="single-submit">Check this label</button>
+        </form>
+
+        <div class="card result-card" id="single-result" aria-live="polite">
+          <div class="result-empty">
+            <p>Results appear here.</p>
+            <p class="hint">No images or details are saved.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== BATCH ===================== -->
+    <section id="panel-batch" class="panel" hidden>
+      <div class="card form">
+        <h2 class="card-title">Batch check</h2>
+        <p class="hint">
+          For large submissions. Upload a manifest (CSV) listing one label per row,
+          plus all the label images. Each row is matched to an image by file name.
+        </p>
+        <details class="manifest-help">
+          <summary>What goes in the manifest?</summary>
+          <p>A CSV with a header row. Required columns: <code>image_filename</code>, <code>brand_name</code>.
+          Optional: <code>label_id</code>, <code>class_type</code>, <code>alcohol_content</code>,
+          <code>net_contents</code>, <code>origin</code> (a state or country).</p>
+          <p><a href="/sample_manifest.csv" download>Download a sample manifest</a></p>
+        </details>
+
+        <div class="row">
+          <label class="field">
+            <span class="label-text">Manifest (CSV)</span>
+            <input id="batch-manifest" type="file" accept=".csv" />
+          </label>
+          <label class="field">
+            <span class="label-text">Label images (select many)</span>
+            <input id="batch-images" type="file" accept="image/*" multiple />
+          </label>
+        </div>
+
+        <button class="btn-primary" id="batch-submit">Check all labels</button>
+      </div>
+
+      <div id="batch-result" class="batch-result" aria-live="polite"></div>
+    </section>
+
+  </main>
+
+  <footer class="wrap foot">
+    <p>Prototype — assists review, does not replace an agent's judgment. Runs on-prem; no label data is stored.</p>
+  </footer>
+
+  <script src="app.js?v=8"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+label_id,image_filename,brand_name,class_type,alcohol_content,net_contents,origin,expected_outcome
+APP-001,01_spirits_correct.png,OLD TOM DISTILLERY,Kentucky Straight Bourbon Whiskey,45% Alc./Vol.,750 mL,Kentucky,"Clean pass; label says 'KY', filed says 'Kentucky' (abbreviation match)"
+APP-002,02_spirits_titlecase_warning.png,SILVER CREEK,Tennessee Whiskey,40% Alc./Vol.,750 mL,Tennessee,Warning heading not in caps -> attention
+APP-003,03_spirits_wrong_abv.png,HIGHLAND PEAK,Single Malt Scotch Whisky,43% Alc./Vol.,700 mL,Product of Scotland,Label ABV 40% vs filed 43% -> attention
+APP-004,04_spirits_brand_variant.png,Stone's Throw,Small Batch Gin,47% Alc./Vol.,750 mL,Oregon,Brand casing/punctuation variant -> should still match
+APP-005,05_rum_missing_warning.png,RIVERBEND,Spiced Rum,35% Alc./Vol.,750 mL,Florida,No warning on label -> attention
+APP-006,06_spirits_proof_inconsistent.png,COPPER FOX,Straight Rye Whiskey,45% Alc./Vol.,750 mL,Virginia,45% ABV but 80 proof (should be 90) -> review
+APP-007,07_wine_glare.png,VALLEY FOG,Pinot Noir,13.5% Alc./Vol.,750 mL,California,Wine with a glare/reflection -> reads correctly (OCR robustness)
+APP-008,08_wine_lowlight_blur.png,CEDAR AND SALT,Chardonnay,14% Alc./Vol.,750 mL,Washington,Low light + blur; brand filed as 'AND' vs '&' -> tests fuzzy match
+APP-009,09_beer_correct_noise.png,IRON LANTERN,India Pale Ale,6.8% Alc./Vol.,12 fl oz,North Carolina,"Malt beverage, slight rotation + sensor noise -> reads correctly"
+APP-010,10_spirits_blurry_readable.png,MOONLIT,Vodka,40% Alc./Vol.,750 mL,Texas,Blurry/dark but now readable after enhancement; minor OCR slips the reviewer can confirm
+APP-011,11_tequila_imported.png,CASA AZULEJO,100% de Agave Tequila Reposado,40% Alc./Vol.,750 mL,Product of Mexico,"Imported product: a single COUNTRY origin ('Product of Mexico'), no US state -> clean"
+APP-012,12_spirits_warning_not_bold.png,GRAY HARBOR,Straight Bourbon Whiskey,46% Alc./Vol.,750 mL,Washington,Warning is ALL CAPS but NOT bold -> attention (bold check catches it)
+APP-013,13_spirits_too_degraded.png,NORTHWIND,London Dry Gin,44% Alc./Vol.,750 mL,Oregon,Too degraded even after enhancement -> trips low-quality flag (reviewer can confirm)
+APP-014,14_wine_blurry_wrong_abv.png,HOLLOW OAK,Cabernet Sauvignon,14.5% Alc./Vol.,750 mL,California,Bad photo + WRONG info: label ABV 13.5% but filed 14.5% -> catches the error
+APP-015,15_beer_glare_wrong_brand.png,IRON ANCHOR,Amber Ale,5.5% Alc./Vol.,12 fl oz,Idaho,Bad photo + WRONG info: label brand 'COPPER KETTLE' vs filed 'IRON ANCHOR' -> catches mismatch

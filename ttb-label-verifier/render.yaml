@@ -1,0 +1,9 @@
+# Render Blueprint — lets you deploy in one click from the repo.
+# In Render: New + -> Blueprint -> pick this repo.
+services:
+  - type: web
+    name: ttb-label-verifier
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
