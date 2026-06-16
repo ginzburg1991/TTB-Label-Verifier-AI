@@ -8,9 +8,13 @@ I designed it to help a compliance agent get through routine matching quickly,
 while leaving the judgment calls to the human. It is **not** an auto-approver —
 and as I explain below, that's a deliberate legal stance, not just a UX choice.
 
+> **Live demo:** https://ttb-label-verifier-dnn7.onrender.com
+> URL. The app is deployed and publicly reachable, and a single label check
+> comes back in **under five seconds**.
+
 ---
 
-## Quick start
+## Quick start for Developer -not hosted
 
 You'll need **Python 3.9+** and the **Tesseract OCR engine** (a one-time system
 install; everything else is pip).
@@ -41,18 +45,20 @@ This writes the sample labels to `sample_data/` plus a `sample_manifest.csv` for
 batch mode. I made the set span distilled spirits, wine, and malt beverages, and
 deliberately covered the cases I thought mattered most:
 
-- compliance edge cases — title-case warning heading, Wording, (all-caps heading, and bold type are all confirmed both need to true)
-, altered/missing warning, wrong ABV, brand casing/punctuation
-  variant ("STONE'S THROW" vs "Stone's Throw"), proof-vs-ABV inconsistency,
-  `&` vs `AND` in a brand name, and a "100% de Agave" label (which must not be
-  misread as 0% ABV);
+- compliance edge cases — a title-case warning heading instead of all-caps,
+  altered or missing warning wording, and a heading that is all-caps but **not
+  bold** (the wording, the capitalization, *and* the bold weight all have to be
+  right); plus wrong ABV, a brand casing/punctuation variant ("STONE'S THROW" vs
+  "Stone's Throw"), proof-vs-ABV inconsistency, `&` vs `AND` in a brand name, and
+  a "100% de Agave" label (which must not be misread as 0% ABV);
 - domestic vs imported — a single **Origin** field holds either a US **state**
   (with abbreviation vs. full-name matching, e.g. label "KY" / filed "Kentucky")
   or a **country** (e.g. "Product of Mexico"); a product is one or the other,
-  never both;
-  Matched what I saw in the Cola Registry https://ttbonline.gov/colasonline/publicSearchColasBasicProcess.do?action=search
-  ![COLA Regestry Examples](screenshots/single-check.png)
-  
+  never both. This matched what I saw in the
+  [COLA Registry](https://ttbonline.gov/colasonline/publicSearchColasBasicProcess.do?action=search):
+
+  ![COLA Registry example](screenshots/single-check.png)
+
 - "bad photo" conditions — glare, low light, blur, slight rotation, and sensor
   noise — so you can see the tool read through imperfections. This includes a
   blurry/dark vodka label that **still reads correctly** (the OCR escalates its
@@ -68,8 +74,8 @@ should do (the app ignores unknown columns).
 > **On TTB's Public COLA Registry:** the registry has real approved label images,
 > and I tried to replicate the spirit of how applications are submitted and
 > reviewed there — while using OCR to read the label images faster than a person
-> could by hand. https://ttbonline.gov/colasonline/publicSearchColasBasic.do
-
+> could by hand.
+> [Public COLA Registry search](https://ttbonline.gov/colasonline/publicSearchColasBasic.do)
 
 **4. Run the app**
 
@@ -120,14 +126,15 @@ is held for human review rather than auto-failed.
 **Reviewer decisions.** The tool assists; the agent decides. The reviewer can
 act on an item in two situations: when the photo is flagged **low quality** (it
 needed heavy enhancement to read, so OCR may be unreliable), or when an item is
-**Review recommended** (a genuinely ambiguous call like a fuzzy name match or when
-the alcohol concentration is 45 but the proof is only 80....should be 90.). In 
-those cases each item offers two choices — **Confirm correct** or **Mark incorrect** 
-— so the reviewer can either clear it or lock it in as a real problem. On a low-quality
-photo the reviewer also gets two whole-label actions: **confirm the label is correct** 
-(vouch for everything at once), or **the image is too low quality to read**, which 
-rejects the label outright with a distinct **Rejected — image unreadable** verdict
-so it gets sent back for a better photo. Any decision can be undone.
+**Review recommended** (a genuinely ambiguous call — like a fuzzy name match, or
+a proof that doesn't line up with the stated alcohol content, e.g. 45% ABV
+labeled as 80 proof when it should be 90). In those cases each item offers two
+choices — **Confirm correct** or **Mark incorrect** — so the reviewer can either
+clear it or lock it in as a real problem. On a low-quality photo the reviewer
+also gets two whole-label actions: **confirm the label is correct** (vouch for
+everything at once), or **the image is too low quality to read**, which rejects
+the label outright with a distinct **Rejected — image unreadable** verdict so it
+gets sent back for a better photo. Any decision can be undone.
 
 The verdict recomputes live from these decisions: confirming clears an item,
 marking anything incorrect drives the label to **Rejected** (even on a
@@ -146,17 +153,18 @@ interesting engineering here is in *respecting* those constraints, not just
 reading a label.
 
 **Assist, don't replace — and I treat that as a legal stance, not just a UX
-choice.** Being a tech consoltant and making decisions that effect global companies
- drove home lessons that shaped this whole project: when AI is in the loop, a human
-has to make the final decision. AI is a fantastic tool, but it needs human interaction
-— and from a liability standpoint, the person who builds the model shouldn't be the one
-on the hook for an approval. Keeping a qualified agent as the decision-maker is what keeps the
-responsibility where it legally belongs. So I designed this to *assist* low quality images, never to
-auto-approve. Confident matches pass, but anything ambiguous is surfaced as
-"review" with a plain-language reason; the raw OCR text is always one click away
-for the agent to verify; and the final call — confirm, mark incorrect, reject —
-is always a human action for low quality images the tool records rather than makes on its own.
-The model flags and explains; the person decides and is accountable.
+choice.** My experience as a tech consultant, making decisions that affect global
+companies, drove home a lesson that shaped this whole project: when AI is in the
+loop, a human has to make the final decision. AI is a fantastic tool, but it
+needs human interaction — and from a liability standpoint, the person who builds
+the model shouldn't be the one on the hook for an approval. Keeping a qualified
+agent as the decision-maker is what keeps the responsibility where it legally
+belongs. So I designed this to *assist*, never to auto-approve. Confident matches
+pass, but anything ambiguous is surfaced as "review" with a plain-language
+reason; the raw OCR text is always one click away for the agent to verify; and
+the final call — confirm, mark incorrect, reject — is always a human action the
+tool records rather than makes on its own. The model flags and explains; the
+person decides and is accountable.
 
 **On-prem OCR, not a cloud vision API.** IT was explicit that the agency network
 blocks outbound traffic to ML endpoints, and that the previous vendor's cloud
@@ -191,9 +199,11 @@ matching logic.
   spirits" isn't misread as the alcohol content.
 
 **Speed was a hard requirement.** The previous pilot died at 30–40 seconds per
-label. I downscale and contrast-normalize images before OCR, which keeps a single
-check to roughly **0.5–2 seconds** on a normal machine — well under the 5-second
-bar.
+label. I downscale and contrast-normalize each image, and read it in a **single
+OCR pass** — rebuilding the text from the same pass that locates the words,
+rather than running the engine twice. A single check comes in **under the
+5-second bar**: roughly 0.5–2 seconds locally, and comfortably within budget on
+the hosted demo as well.
 
 **Built for a non-technical, 50+ audience.** Large type, big tap targets, strong
 focus outlines, plain-language copy, one obvious primary action per screen, and
@@ -221,6 +231,8 @@ ttb-label-verifier/
 │   └── generate_test_labels.py
 ├── tests/
 │   └── test_matching.py
+├── Dockerfile         # Container image (installs Tesseract) for deployment
+├── render.yaml        # One-click Render blueprint
 ├── requirements.txt
 └── README.md
 ```
@@ -274,18 +286,23 @@ This is a time-boxed prototype, so I want to be honest about where the lines are
 
 ## Deployment notes
 
-Any host that runs a Python web service works (it's a standard ASGI app):
+The app is deployed and publicly reachable — see the **Live demo** link near the
+top. It's a standard ASGI app, so any host that runs Python works:
 
 ```bash
 uvicorn backend.main:app --host 0.0.0.0 --port 8000
 ```
 
-A container with `tesseract-ocr` installed deploys cleanly to a service like
-Render, Railway, Fly.io, or Azure App Service. **Important caveat that matches
-the brief:** in TTB's *real* environment, outbound calls are firewalled — which
-is exactly why I run OCR locally here. A demo deployed to a public cloud works
-because Tesseract needs no network; if you later swap in a cloud vision provider,
-that's the piece that would be blocked behind the agency firewall.
+The repo includes a **`Dockerfile`** (which installs the Tesseract binary — the
+one dependency pip can't provide) and a **`render.yaml`** blueprint, so it
+deploys by simply pointing a host like Render, Railway, Fly.io, or Cloud Run at
+the repo. **Important caveat that matches the brief:** in TTB's *real*
+environment, outbound calls are firewalled — which is exactly why I run OCR
+locally here. A public-cloud demo works because Tesseract needs no network; if
+you later swap in a cloud vision provider, that's the piece that would be blocked
+behind the agency firewall.
 
-## I Created this README file with the help of CLAUDE AI, red over, enhanced, and corrected by Michael Ginzburg
+---
 
+_I created this README with the help of Claude AI — then read over, enhanced, and
+corrected by Michael Ginzburg._
