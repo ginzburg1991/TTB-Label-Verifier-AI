@@ -240,7 +240,7 @@ ttb-label-verifier/
 ---
 
 ## Testing
-For testing, please use the files in the sample_data.
+### For testing, please use the files in the sample_data.
 
 I cover the matching/warning logic with unit tests that run on plain text (no
 OCR, no network), so they're fast and deterministic:
