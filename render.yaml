@@ -2,7 +2,7 @@
 # In Render: New + -> Blueprint -> pick this repo.
 services:
   - type: web
-    name: ttb-label-verifier
+    name: DOT
     runtime: docker
     plan: free
     healthCheckPath: /api/health

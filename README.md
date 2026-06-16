@@ -287,5 +287,5 @@ is exactly why I run OCR locally here. A demo deployed to a public cloud works
 because Tesseract needs no network; if you later swap in a cloud vision provider,
 that's the piece that would be blocked behind the agency firewall.
 
-## This README FILE was made with the help of CLAUDE AI, red over, enhanced, and corrected by Michael Ginzburg
+## I Created this README file with the help of CLAUDE AI, red over, enhanced, and corrected by Michael Ginzburg
 
